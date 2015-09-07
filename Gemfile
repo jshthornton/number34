@@ -5,5 +5,6 @@ source "https://rubygems.org"
 gem 'selenium-webdriver', '~> 2.47.1'
 
 group :test do
-  gem 'rspec', '~> 3.3.0'
+  gem 'rspec', '~> 3.3.0', require: false
+  gem 'rubocop', require: false
 end
