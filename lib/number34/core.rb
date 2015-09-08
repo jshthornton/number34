@@ -2,10 +2,10 @@ require_relative 'configuration'
 require_relative 'capabilities_helper'
 
 module Number34
-  def self.test_against(capabilities_key, &block)
+  def self.test_against(capabilities_key, ctx = ::RSpec, &block)
     config = ::RSpec.configuration.number34
 
-    ::RSpec.describe capabilities_key do
+    ctx.describe capabilities_key do
       after(:each) do
         driver.quit
       end
