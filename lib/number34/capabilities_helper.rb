@@ -3,10 +3,15 @@ require 'yaml'
 module Number34
   class CapabilitiesHelper
 
-    def self.get_collection(map, key = '__all__')
-      return map[key] unless key == '__all__'
+    def self.get_collection(map, keys = '__all__')
+      return map.values.flatten if keys == '__all__'
 
-      map.values.flatten
+      keys = Array(keys)
+      collection = []
+      keys.each do |key|
+        collection.concat map[key]
+      end
+      collection
     end
   end
 end
