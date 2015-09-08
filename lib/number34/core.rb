@@ -2,42 +2,26 @@ require_relative 'configuration'
 require_relative 'capabilities_helper'
 
 module Number34
-  class Core
-    attr_accessor :configuration
+  def self.test_against(capabilities_key, &block)
+    config = ::RSpec.configuration.number34
 
-    def self.make
-      configuration = Number34::Configuration.new
-      number34 = Number34::Core.new
-      number34.configuration = configuration
-      number34
-    end
+    ::RSpec.describe capabilities_key do
+      after(:each) do
+        driver.quit
+      end
 
-    def configure
-      yield configuration if block_given?
-    end
+      capabilities_collection = Number34::CapabilitiesHelper::get_collection(config.capabilities_map, capabilities_key)
 
-    def capabilities_collection(key)
-      CapabilitiesHelper::get_collection(configuration.capabilities_map, key)
-    end
-
-    def test_against(capabilities_key, &block)
-      core = self
-      ::RSpec.describe capabilities_key do
-        after(:each) do
-          driver.quit
+      capabilities_collection.each do |capabilities|
+        let(:driver) do
+          Selenium::WebDriver.for(
+            :remote,
+            :url => config.webdriver_url,
+            :desired_capabilities => capabilities
+          )
         end
 
-        core.capabilities_collection(capabilities_key).each do |capabilities|
-          let(:driver) do
-            Selenium::WebDriver.for(
-              :remote,
-              :url => "http://joshuathornton1:h87dU5zZKksRW2tvqhnY@hub.browserstack.com/wd/hub",
-              :desired_capabilities => capabilities
-            )
-          end
-
-          self.instance_eval(&block)
-        end
+        self.instance_eval(&block)
       end
     end
   end
